@@ -1,0 +1,2 @@
+model_checkpoint_path: "image_net_8.weights"
+all_model_checkpoint_paths: "image_net_8.weights"
