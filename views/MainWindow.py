@@ -8,7 +8,7 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-from PySide6 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -160,9 +160,6 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidget(self.plots)
         self.gridLayout_2.addWidget(self.scrollArea, 1, 0, 2, 1)
         self.tab2.addTab(self.tab, "")
-        self.tab_3 = QtWidgets.QWidget()
-        self.tab_3.setObjectName("tab_3")
-        self.tab2.addTab(self.tab_3, "")
         self.gridLayout_7.addWidget(self.tab2, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -195,7 +192,6 @@ class Ui_MainWindow(object):
         self.tab2.setTabText(self.tab2.indexOf(self.tab_2), QtWidgets.QApplication.translate("MainWindow", "Навчання мереж сегментації", None, -1))
         self.start_calc_params.setText(QtWidgets.QApplication.translate("MainWindow", "Почати визначення", None, -1))
         self.tab2.setTabText(self.tab2.indexOf(self.tab), QtWidgets.QApplication.translate("MainWindow", "Визначення параметрів", None, -1))
-        self.tab2.setTabText(self.tab2.indexOf(self.tab_3), QtWidgets.QApplication.translate("MainWindow", "Прогнозування параметрів", None, -1))
 
 
 if __name__ == "__main__":

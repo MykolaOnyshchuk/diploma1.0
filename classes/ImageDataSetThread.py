@@ -6,7 +6,7 @@ import re
 import cv2
 from classes.Video import Video
 from classes.Line import Line
-from PySide6 import QtCore
+from PyQt5 import QtCore
 from models.Observable import Observable, event
 
 

@@ -251,11 +251,6 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_3">
-       <attribute name="title">
-        <string>Прогнозування параметрів</string>
-       </attribute>
-      </widget>
      </widget>
     </item>
    </layout>

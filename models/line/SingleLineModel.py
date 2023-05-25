@@ -1,5 +1,5 @@
 from models.Observable import Observable, event
-from PySide6 import QtCore
+from PyQt5 import QtCore
 from models.line.LineModel import LineModel
 from classes.ImageDataSetThread import ImageDataSetThread
 from classes.LearnImageNetThread import LearnImageNetThread

@@ -3,9 +3,9 @@ from models.camera.CameraSql import CameraSql
 from models.line.LineSql import LineSql
 from classes.Video import Video
 from PIL import ImageQt
-from PySide6 import QtCore, QtSql, QtWidgets
-from PySide6.QtGui import QPixmap, QImage, QColor, QMouseEvent, QPainter, QPen, Qt
-from PySide6.QtCore import QPoint, QLine
+from PyQt5 import QtCore, QtSql, QtWidgets
+from PyQt5.QtGui import QPixmap, QImage, QColor, QMouseEvent, QPainter, QPen
+from PyQt5.QtCore import QPoint, QLine, Qt
 from views.CameraConfigDialog import Ui_CameraConfigDialog
 from models.line.LineModel import LineModel
 import cv2
@@ -167,7 +167,7 @@ class CameraConfig(QtWidgets.QWidget):
         # c_rgbf = QColor(c).getRgbf()  # RGBA float: (1.0, 0.3123, 0.0, 1.0)
         #print("pressed four")
         #print(x + ' and ' + y)
-        return x, y#, c_rgb
+        # return x, y#, c_rgb
 
     def update_spinboxes(self):
         curr_points = self.__get_current_list_coords()

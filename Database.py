@@ -1,4 +1,4 @@
-from PySide6.QtSql import *
+from PyQt5.QtSql import *
 from datetime import datetime
 import numpy as np
 

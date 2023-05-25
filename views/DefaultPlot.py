@@ -1,11 +1,12 @@
+from PyQt5 import QtCore, QtWidgets, QtGui
+from PyQt5.QtSql import *
+
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
-from PySide6 import QtCore, QtWidgets, QtGui
 import math
 import numpy as np
 import matplotlib.dates as md
 from datetime import datetime
-from PySide6.QtSql import *
 from enum import Enum
 from collections import namedtuple
 from models.line.LineModel import LineModel
@@ -83,7 +84,8 @@ class DefaultPlot(QtWidgets.QWidget):
 
     def __prepare_data(self, line):
         x, y, last_tsp = line
-        step = self.__time_enum.value.moving_step
+        # step = self.__time_enum.value.moving_step
+        step = 0
         size = len(x)
         start = size - self.__time_enum.value.count_data
         x = x[start:size]
@@ -140,6 +142,38 @@ class DefaultPlot(QtWidgets.QWidget):
 
         return x, y, last_tsp
 
+    def mock_stst_data(self):
+        x = []
+        for i in range(0, 20):
+            x.append(datetime.fromtimestamp(1684792800 + i * 1000))
+
+        y = []
+        y.append(0.58)
+        y.append(0.64)
+        y.append(0.22)
+        y.append(0.47)
+        y.append(0.75)
+        y.append(0.58)
+        y.append(0.64)
+        y.append(0.22)
+        y.append(0.47)
+        y.append(0.75)
+        y.append(0.58)
+        y.append(0.64)
+        y.append(0.22)
+        y.append(0.47)
+        y.append(0.75)
+        y.append(0.58)
+        y.append(0.64)
+        y.append(0.22)
+        y.append(0.47)
+        y.append(0.75)
+        tsp = 1684912208
+
+        print(f' x length: {len(x)}')
+        print(f' y length: {len(y)}')
+        return x, y, tsp
+
     def __load_data(self):
         self.__lines_data = []
 
@@ -152,14 +186,18 @@ class DefaultPlot(QtWidgets.QWidget):
         lines = LineModel(LineSql.all_from_camera(self.__camera_id))
         lines.open()
         lines_count = lines.rowCount()
+        lines_count = 1
         for i in range(0, lines_count):
-            line_id = LineSql.get_id(lines.record(i))
+            line_id = 18
 
-            sql = 'SELECT * FROM statCameras WHERE cameraId = {} and line = {} ORDER BY tsp DESC LIMIT {}'.format(self.__camera_id,
-                                                                                                id_to_number[line_id],
-                                                                                                self.__time_enum_max.value.count_data)
-            print(sql)
-            line_data = DefaultPlot.__load_data_sql(sql)
+            # sql = 'SELECT * FROM statCameras WHERE cameraId = {} and line = {} ORDER BY tsp DESC LIMIT {}'.format(self.__camera_id,
+            #                                                                                     id_to_number[line_id],
+            #                                                                                     self.__time_enum_max.value.count_data)
+            # print(sql)
+            # line_data = DefaultPlot.__load_data_sql(sql)
+
+            line_data = self.mock_stst_data()
+
             if line_data:
                 self.__lines_data.append(line_data)
 
@@ -196,7 +234,9 @@ class DefaultPlot(QtWidgets.QWidget):
         for i in range(0, count_lines):
             x, y, last_tsp = self.__lines_data[i]
             self.__model.setData(self.__model.index(0, i), y[-1])
+
         # self.__table.resizeColumnsToContents()
+
         self.__table.resizeRowsToContents()
 
     def __update(self):

@@ -1,9 +1,13 @@
-from PySide6 import QtCore, QtSql, QtWidgets
-from PySide6.QtSql import *
-from PySide6.QtGui import QPixmap, QImage
+import threading
+
+from PyQt5 import QtCore, QtSql, QtWidgets
+from PyQt5.QtSql import *
+from PyQt5.QtGui import QPixmap, QImage
 from views.MainWindow import Ui_MainWindow
 from views.CameraConfig import CameraConfig
 from views.DefaultPlot import DefaultPlot
+from views.VideoStream import VideoStream
+from classes.RunImageNetThread import RunImageNetThread
 from views.TrainImageNetView import TrainImageNetView
 from models.camera.CameraModel import CameraModel
 from models.camera.CameraSql import CameraSql
@@ -84,16 +88,18 @@ class MainController(QtCore.QObject):
 
     def run(self):
         self.__main_window.show()
+
         # CameraConfig.exec(6)
 
         # x, y = Database.get_stat_cameras_for_net()
-        xtest, ytest, xtsp = Database.get_stat_cameras_for_net2()
+        # # xtest, ytest, xtsp = Database.get_stat_cameras_for_net2()
         # print(x,y)
-        net = ReccurentNet()
-        net.run2(xtest, ytest, xtsp)
+        # # net = ReccurentNet()
+        # # net.run2(xtest, ytest, xtsp)
         # net.run(x, y, xtest, ytest, xtsp)
         # calc = CalculateParams()
         # calc.run()
+
 
     def __calc_params(self):
         self.__main_ui.start_calc_params.setEnabled(False)
@@ -102,7 +108,31 @@ class MainController(QtCore.QObject):
         plot_layout.setSpacing(0)
         self.__main_ui.plots.setLayout(plot_layout)
 
-        for i in range(0, self.__selected_cameras.rowCount()):
-            camera_id = CameraSql.get_id(self.__selected_cameras.record(i))
-            camera_title = CameraSql.get_title(self.__selected_cameras.record(i))
-            plot_layout.addWidget(DefaultPlot(camera_id, camera_title))
+        camera_id = CameraSql.get_id(self.__selected_cameras.record(0))
+        camera_title = CameraSql.get_title(self.__selected_cameras.record(0))
+        # plot_layout.addWidget(DefaultPlot(camera_id, camera_title))
+        vid_stream = VideoStream(20, 20, 400, 250)
+        plot_layout.addWidget(vid_stream)
+
+
+        # list_lines = []
+        # sql_lines = QSqlQuery('SELECT * FROM line WHERE id={}'.format(6))
+        # while sql_lines.next():
+        #     list_lines = LineSql.get_list_coords(sql_lines.record())
+        # print(list_lines)
+        # # 18cam18stream_1579869707.mp4
+        # thread = RunImageNetThread('E:/18/cam18stream_1580709296.mp4', list_lines)
+        #
+        # thread_lock = threading.Lock()
+        #
+        # # Create thread
+        # t1 = threading.Thread(target=vid_stream.mediaPlayer.play, args=(2, 1, thread_lock))
+        # t2 = threading.Thread(target=thread.run, args=(2, 2, thread_lock))
+        #
+        # # Start task execution
+        # t1.start()
+        # t2.start()
+        #
+        # # Wait for thread to complete execution
+        # t1.join()
+        # t2.join()

@@ -1,5 +1,5 @@
 from models.Observable import Observable, event
-from PySide6 import QtCore
+from PyQt5 import QtCore
 from models.camera.CameraModel import CameraModel
 from models.line.SingleLineModel import SingleLineModel
 from models.line.LineSql import LineSql

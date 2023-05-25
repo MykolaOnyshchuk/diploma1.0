@@ -5,7 +5,7 @@ import subprocess
 import re
 import urllib.parse
 from classes.Video import Video
-from PySide6 import QtCore
+from PyQt5 import QtCore
 from models.Observable import Observable, event
 
 

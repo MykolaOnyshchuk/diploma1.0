@@ -1,4 +1,4 @@
-from PySide6 import QtCore, QtSql, QtWidgets
+from PyQt5 import QtCore, QtSql, QtWidgets
 from views.TrainImageNetView import TrainImageNetView
 from models.camera.SingleCameraModel import SingleCameraModel
 

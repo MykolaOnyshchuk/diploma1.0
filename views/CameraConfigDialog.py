@@ -8,8 +8,8 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-from PySide6 import QtCore, QtGui, QtWidgets
-from PySide6.QtGui import QColor
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtGui import QColor
 
 
 class Ui_CameraConfigDialog(object):
@@ -137,8 +137,8 @@ class Ui_CameraConfigDialog(object):
         self.show_lines.setObjectName("show_lines")
 
         self.retranslateUi(CameraConfigDialog)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), CameraConfigDialog.accept)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), CameraConfigDialog.reject)
+        self.buttonBox.accepted.connect(CameraConfigDialog.accept)
+        self.buttonBox.rejected.connect(CameraConfigDialog.reject)
         QtCore.QMetaObject.connectSlotsByName(CameraConfigDialog)
 
     def retranslateUi(self, CameraConfigDialog):
@@ -173,4 +173,3 @@ if __name__ == "__main__":
     ui.setupUi(CameraConfigDialog)
     CameraConfigDialog.show()
     sys.exit(app.exec_())
-

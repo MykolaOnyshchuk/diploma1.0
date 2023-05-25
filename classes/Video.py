@@ -68,8 +68,12 @@ class Video:
         num_frame = 0
         for i in range(int(frame_count)):
             ret, frame = cam.read()
-            if not ret:
-                break
-            elif num_frame % 5 == 0:
+            if ret:
                 frames.append(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
             num_frame += 1
+
+    @staticmethod
+    def get_video_duration(video_path):
+        video = cv2.VideoCapture(video_path)
+        duration = video.get(cv2.CAP_PROP_POS_MSEC)
+        return duration

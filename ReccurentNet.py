@@ -12,6 +12,7 @@ from sklearn.model_selection import train_test_split
 # from sklearn.preprocessing import MinMaxScaler
 # from sklearn.metrics import mean_squared_error
 
+
 class ReccurentNet:
     def __init__(self):
         numpy.random.seed(7)

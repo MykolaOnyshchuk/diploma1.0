@@ -51,7 +51,6 @@ class LineThread(Thread):
             # predictions
             print('image net prediction', self.__line_id)
             self.__load_image_net()
-            print('pzdc')
             predictions = self.__image_net.predict(train_x)
 
             # calculate tlcr, intensity
@@ -67,7 +66,6 @@ class LineThread(Thread):
 
             # !!!!!! Допрацювати k + time_range
             intensity = self.get_intensity(predictions, tlcr_arr, 0.155, 60)
-
 
             print(tlcr, intensity, self.__line_id)
 
@@ -105,7 +103,7 @@ class CameraThread(Thread):
         while True:
             start_time = time.time()
             self.__images.clear()
-            Video.fill_images('D:/testintensity/18/cam18stream_1580989118.mp4', self.__images)
+            Video.fill_images('E:/diploma1.0/video/18/cam18stream_1580712551.mp4', self.__images)
             self.__images_ready_event.set()
 
             for event in self.__line_events:
@@ -122,7 +120,6 @@ class CalculateParams:
         pass
 
     def run(self):
-        return
         camera_thread = CameraThread(18)
         camera_thread.daemon = True
         camera_thread.start()
