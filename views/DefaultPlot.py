@@ -34,7 +34,8 @@ class DefaultPlot(QtWidgets.QWidget):
         super(DefaultPlot, self).__init__()
         self.__camera_id = camera_id
         self.__title = title
-        self.__load_data()
+        self.__lines_data = []
+        # self.__load_data()
 
         # graph
         fig = Figure(figsize=(width, height), dpi=dpi)
@@ -58,19 +59,19 @@ class DefaultPlot(QtWidgets.QWidget):
 
         # main layout
         self.__inner_canvas.setMinimumHeight(400)
-        layout = QtWidgets.QVBoxLayout()
-        layout.addWidget(self.__table)
-        layout.addWidget(widget_buttons)
-        layout.addWidget(self.__inner_canvas)
-        self.setLayout(layout)
+        self.layout = QtWidgets.QVBoxLayout()
+        # layout.addWidget(self.__table)
+        # layout.addWidget(widget_buttons)
+        self.layout.addWidget(self.__inner_canvas)
+        self.setLayout(self.layout)
 
         # timer
-        timer = QtCore.QTimer(self)
-        timer.timeout.connect(self.__update)
-        timer.start(self.__timer_update_time)
+        # timer = QtCore.QTimer(self)
+        # timer.timeout.connect(self.__update)
+        # timer.start(self.__timer_update_time)
 
         self.__draw_data()
-        self.__update_data()
+        # self.__update_data()
 
     def __add_button_from_enum(self, value, layout):
         button = QtWidgets.QPushButton()
@@ -107,7 +108,8 @@ class DefaultPlot(QtWidgets.QWidget):
 
         for i in range(0, count_lines):
             line = self.__lines_data[i]
-            x, y = self.__prepare_data(line)
+            # x, y = self.__prepare_data(line)
+            x, y, _ = self.__lines_data[i]
             if len(x) == 0:
                 continue
             self.axes.plot(x, y, linestyle='solid', color=self.__colors[i], label=str(i + 1))
@@ -175,7 +177,7 @@ class DefaultPlot(QtWidgets.QWidget):
         return x, y, tsp
 
     def __load_data(self):
-        self.__lines_data = []
+        # self.__lines_data = []
 
         id_to_number = {
             6: 4,
@@ -228,6 +230,21 @@ class DefaultPlot(QtWidgets.QWidget):
             return
         self.setVisible(True)
 
+    def update_data_tmp(self, tlcr, tsp):
+        count_lines = len(self.__lines_data)
+        tm = []
+        for i in range(len(tm) - 1):
+            tm.append(datetime.fromtimestamp(tsp[i]))
+        self.__lines_data.clear()
+        self.__lines_data.append((tm, tlcr, tsp[len(tsp) - 1]))
+        if count_lines == 0:
+            self.setVisible(False)
+            return
+        self.setVisible(True)
+
+        self.__draw_data()
+
+
         # table
         self.__model.setColumnCount(len(self.__lines_data))
         self.__model.setVerticalHeaderLabels(self.__table_labels)
@@ -239,8 +256,9 @@ class DefaultPlot(QtWidgets.QWidget):
 
         self.__table.resizeRowsToContents()
 
-    def __update(self):
+    def __update(self, tlcr, tsp):
         print('update')
-        self.__load_data()
-        self.__update_data()
+        # self.__load_data()
+        # self.__update_data()
+        self.update_data_tmp(tlcr, tsp)
         self.__draw_data()

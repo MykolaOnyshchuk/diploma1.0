@@ -1,6 +1,7 @@
-import threading
+from threading import Thread
 
 from PyQt5 import QtCore, QtSql, QtWidgets
+from PyQt5.QtCore import QThread
 from PyQt5.QtSql import *
 from PyQt5.QtGui import QPixmap, QImage
 from views.MainWindow import Ui_MainWindow
@@ -89,6 +90,25 @@ class MainController(QtCore.QObject):
     def run(self):
         self.__main_window.show()
 
+        # list_lines = []
+        # sql_lines = QSqlQuery('SELECT * FROM line WHERE id={}'.format(6))
+        # while sql_lines.next():
+        #     list_lines = LineSql.get_list_coords(sql_lines.record())
+        # print(list_lines)
+        #
+        # self.thread = QThread()
+        # self.run_image = RunImageNetThread('E:/18/cam18stream_1580709296.mp4', list_lines)
+        #
+        # self.run_image.moveToThread(self.thread)
+        #
+        # self.thread.started.connect(self.run_image.run)
+        # self.run_image.finished.connect(self.thread.quit)
+        # self.run_image.finished.connect(self.run_image.deleteLater)
+        # self.thread.finished.connect(self.thread.deleteLater)
+        # # Step 6: Start the thread
+        # self.thread.start()
+        # self.thread.wait()
+
         # CameraConfig.exec(6)
 
         # x, y = Database.get_stat_cameras_for_net()
@@ -101,18 +121,66 @@ class MainController(QtCore.QObject):
         # calc.run()
 
 
+        # list_lines = []
+        # sql_lines = QSqlQuery('SELECT * FROM line WHERE id={}'.format(6))
+        # while sql_lines.next():
+        #     list_lines = LineSql.get_list_coords(sql_lines.record())
+        # print(list_lines)
+        # # thread = RunImageNetThread('E:/18/cam18stream_1580707577.mp4', list_lines)
+        # # t1 = Thread(target=thread.run)
+        # # t1.start()
+        # # t1.join()
+        #
+        # self.thread = QThread()
+        # # self.run_image = RunImageNetThread('E:/18/cam18stream_1580707577.mp4', list_lines)
+        # self.run_image = RunImageNetThread('E:/18/cam18stream_1580707638.mp4', list_lines)
+        #
+        # self.run_image.moveToThread(self.thread)
+        #
+        # self.thread.started.connect(self.run_image.run)
+        # self.run_image.finished.connect(self.thread.quit)
+        # self.run_image.finished.connect(self.run_image.deleteLater)
+        # self.thread.finished.connect(self.thread.deleteLater)
+        # # Step 6: Start the thread
+        # self.thread.start()
+        # print("Before wait")
+        # self.thread.wait()
+        # print("After wait")
+
+
+
     def __calc_params(self):
         self.__main_ui.start_calc_params.setEnabled(False)
 
         plot_layout = QtWidgets.QGridLayout()
         plot_layout.setSpacing(0)
         self.__main_ui.plots.setLayout(plot_layout)
-
+        #
         camera_id = CameraSql.get_id(self.__selected_cameras.record(0))
         camera_title = CameraSql.get_title(self.__selected_cameras.record(0))
-        # plot_layout.addWidget(DefaultPlot(camera_id, camera_title))
-        vid_stream = VideoStream(20, 20, 400, 250)
+        tlcr_plot = DefaultPlot(camera_id, camera_title)
+        # plot_layout.addWidget(tlcr_plot)
+        vid_stream = VideoStream(20, 20, 400, 250, tlcr_plot, 0)
         plot_layout.addWidget(vid_stream)
+
+        # list_lines = []
+        # sql_lines = QSqlQuery('SELECT * FROM line WHERE id={}'.format(6))
+        # while sql_lines.next():
+        #     list_lines = LineSql.get_list_coords(sql_lines.record())
+        # print(list_lines)
+        #
+        # self.thread = QThread()
+        # self.run_image = RunImageNetThread('E:/18/cam18stream_1580709296.mp4', list_lines)
+        #
+        # self.run_image.moveToThread(self.thread)
+        #
+        # self.thread.started.connect(self.run_image.run)
+        # self.run_image.finished.connect(self.thread.quit)
+        # self.run_image.finished.connect(self.run_image.deleteLater)
+        # self.thread.finished.connect(self.thread.deleteLater)
+        # # Step 6: Start the thread
+        # self.thread.start()
+        # self.thread.wait()
 
 
         # list_lines = []

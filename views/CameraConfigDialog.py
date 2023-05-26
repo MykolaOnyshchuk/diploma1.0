@@ -133,7 +133,7 @@ class Ui_CameraConfigDialog(object):
         self.delete_line.setObjectName("delete_line")
         self.horizontalLayout_5.addWidget(self.delete_line)
         self.show_lines = QtWidgets.QCheckBox(CameraConfigDialog)
-        self.show_lines.setGeometry(QtCore.QRect(10, 430, 121, 17))
+        self.show_lines.setGeometry(QtCore.QRect(10, 430, 121, 30))
         self.show_lines.setObjectName("show_lines")
 
         self.retranslateUi(CameraConfigDialog)

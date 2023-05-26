@@ -17,7 +17,7 @@ class Video:
     def get_list_urls(id, gplmod):
         url_gplmod = "http://videoprobki.ua/{}?p1=cam{}&p2={}&p3=1&p4=1".format(gplmod, id, 1)
         list_urls = requests.get(url_gplmod).text.split(", ")
-        print('eba', url_gplmod, list_urls)
+        print('eee', url_gplmod, list_urls)
         list_urls.pop(0)
         # list_urls.pop()
         return list_urls
@@ -47,7 +47,6 @@ class Video:
             return
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         return frame
-        # cv2.imshow('trololo', frame)
         # return Image.fromarray(frame)
         # Video.download_video(server + list_urls[-1], os.path.join(Video.video_folder, list_urls[-1]))
 

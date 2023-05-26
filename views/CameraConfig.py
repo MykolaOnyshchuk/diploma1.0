@@ -1,3 +1,6 @@
+from PyQt5.QtSql import QSqlQuery
+
+from classes.RunImageNetThread import RunImageNetThread
 from models.camera.CameraModel import CameraModel
 from models.camera.CameraSql import CameraSql
 from models.line.LineSql import LineSql
@@ -5,7 +8,7 @@ from classes.Video import Video
 from PIL import ImageQt
 from PyQt5 import QtCore, QtSql, QtWidgets
 from PyQt5.QtGui import QPixmap, QImage, QColor, QMouseEvent, QPainter, QPen
-from PyQt5.QtCore import QPoint, QLine, Qt
+from PyQt5.QtCore import QPoint, QLine, Qt, QThread
 from views.CameraConfigDialog import Ui_CameraConfigDialog
 from models.line.LineModel import LineModel
 import cv2
@@ -254,3 +257,4 @@ class CameraConfig(QtWidgets.QWidget):
         print('aaaa', image)
         camera_config = CameraConfig(image, camera_id)
         camera_config.show()
+

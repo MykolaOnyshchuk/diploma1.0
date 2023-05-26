@@ -3,7 +3,7 @@ import time
 import os
 import cv2
 import numpy as np
-from PyQt5.QtCore import QThread
+from PyQt5.QtCore import QThread, QObject
 from skimage.util import img_as_float
 from classes.Video import Video
 from classes.ImageNet import ImageNet
@@ -11,7 +11,9 @@ from classes.Line import Line
 from PyQt5 import QtCore
 
 
-class RunImageNetThread(QThread):
+class RunImageNetThread(QObject):
+    finished = QtCore.pyqtSignal()
+    progress = QtCore.pyqtSignal(int)
 
     def __init__(self, video, coords):
         super().__init__()
@@ -26,13 +28,12 @@ class RunImageNetThread(QThread):
         line = Line(self.__coords)
 
         print('images', len(images))
-        size = len(images) / 5
-        size = int(size)
+        images = images[::5]
+        size = len(images)
 
         train_x = np.zeros((size, ImageNet.size_img, ImageNet.size_img, 3), dtype='float32')
         for i in range(0, len(images)):
-            if i % 5 == 0:
-                train_x[int(i / 5) - 1] = np.array(img_as_float(line.get_image(images[i])))
+            train_x[i] = np.array(img_as_float(line.get_image(images[i])))
 
         image_net = ImageNet()
         weights_dir = os.path.join(os.getcwd(), 'weights')
@@ -43,7 +44,9 @@ class RunImageNetThread(QThread):
         image_net.load_weights(weights_file_name)
 
         print(train_x)
+        print(train_x.size)
         predictions = image_net.predict(train_x)
+        print('After prediction')
 
         for i in range(0, len(predictions)):
             image = (predictions[i].squeeze() * 255)
@@ -62,8 +65,13 @@ class RunImageNetThread(QThread):
         tlcr = tlcr / size_predictions
 
         # !!!!!! Допрацювати k + time_range
-        intensity = self.get_intensity(predictions, tlcr_arr, 0.155, 60)
+        intensity = self.get_intensity(predictions, tlcr_arr, 0.155, 1)
 
+        f = open("D:/Chrome Downloads/mock_tlcr_2.txt", "a")
+        for i in range(0, len(tlcr_arr)):
+            f.write(str(tlcr_arr[i]) + ";")
+        f.write("\n" + str(intensity))
+        f.close()
         print(tlcr, intensity)
 
     def get_intensity(self, output_images, tlcr_arr, k, time_range):
