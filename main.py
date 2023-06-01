@@ -2,7 +2,7 @@ import sys
 from PyQt5 import QtWidgets
 from PyQt5.QtSql import *
 # import qdarktheme
-import qt_material
+# import qt_material
 from controllers.MainController import MainController
 from db.Db import Db
 
@@ -14,7 +14,7 @@ class Application:
     def __init__(self):
         self.__app = QtWidgets.QApplication(sys.argv)
         # qdarktheme.setup_theme()
-        qt_material.apply_stylesheet(self.__app, theme='dark_cyan.xml')
+        # qt_material.apply_stylesheet(self.__app, theme='dark_cyan.xml')
 
         self.mainController = MainController()
 

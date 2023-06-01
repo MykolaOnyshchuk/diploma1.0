@@ -13,12 +13,13 @@ from PyQt5 import QtCore
 
 class RunImageNetThread(QObject):
     finished = QtCore.pyqtSignal()
-    progress = QtCore.pyqtSignal(int)
 
     def __init__(self, video, coords):
         super().__init__()
         self.__video = video
         self.__coords = coords
+        self.__tlcr_arr = []
+        self.__intensity = 0
 
     def run(self):
         print('ppc')
@@ -57,7 +58,6 @@ class RunImageNetThread(QObject):
         print('calculate tlcr, intensity from prediction')
         size_predictions = len(predictions)
         tlcr = 0
-        intensity = 0
         tlcr_arr = []
         for i in range(0, size_predictions):
             tlcr += line.get_tlcr(predictions[i])
@@ -67,12 +67,17 @@ class RunImageNetThread(QObject):
         # !!!!!! Допрацювати k + time_range
         intensity = self.get_intensity(predictions, tlcr_arr, 0.155, 1)
 
-        f = open("D:/Chrome Downloads/mock_tlcr_2.txt", "a")
-        for i in range(0, len(tlcr_arr)):
-            f.write(str(tlcr_arr[i]) + ";")
-        f.write("\n" + str(intensity))
-        f.close()
+        # f = open("D:/Chrome Downloads/mock_tlcr_2.txt", "a")
+        # for i in range(0, len(tlcr_arr)):
+        #     f.write(str(tlcr_arr[i]) + ";")
+        # f.write("\n" + str(intensity))
+        # f.close()
+        self.__tlcr_arr = tlcr_arr
+        self.__intensity = intensity
+        print("--------------------------------------------------")
+        print(f"Analysis for {self.__video}")
         print(tlcr, intensity)
+        self.finished.emit()
 
     def get_intensity(self, output_images, tlcr_arr, k, time_range):
         sum_intensity = 0
@@ -80,3 +85,6 @@ class RunImageNetThread(QObject):
             sum_intensity += (1 if tlcr_arr[i] > k > tlcr_arr[i - 1] else 0)
         intensity = sum_intensity / time_range
         return intensity
+
+    def get_tlcr_and_intensity(self):
+        return self.__tlcr_arr, self.__intensity

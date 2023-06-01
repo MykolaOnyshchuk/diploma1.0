@@ -159,7 +159,7 @@ class MainController(QtCore.QObject):
         camera_id = CameraSql.get_id(self.__selected_cameras.record(0))
         camera_title = CameraSql.get_title(self.__selected_cameras.record(0))
         tlcr_plot = DefaultPlot(camera_id, camera_title)
-        # plot_layout.addWidget(tlcr_plot)
+        plot_layout.addWidget(tlcr_plot)
         vid_stream = VideoStream(20, 20, 400, 250, tlcr_plot, 0)
         plot_layout.addWidget(vid_stream)
 

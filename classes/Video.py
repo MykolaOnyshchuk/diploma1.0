@@ -74,5 +74,7 @@ class Video:
     @staticmethod
     def get_video_duration(video_path):
         video = cv2.VideoCapture(video_path)
-        duration = video.get(cv2.CAP_PROP_POS_MSEC)
-        return duration
+        frame = video.get(cv2.CAP_PROP_FRAME_COUNT)
+        fps = video.get(cv2.CAP_PROP_FPS)
+        duration_in_seconds = frame / fps
+        return duration_in_seconds

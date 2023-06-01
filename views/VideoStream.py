@@ -33,9 +33,10 @@ class VideoStream(QVideoWidget):
         self.list_of_videos = []
         self.list_of_videos.append('E:/18/cam18stream_1580707577.mp4')
         self.list_of_videos.append('E:/18/cam18stream_1580707638.mp4')
+        self.list_of_videos.append('E:/18/cam18stream_1580715806.mp4')
 
-        self.playlist.addMedia(QMediaContent(QUrl.fromLocalFile(self.list_of_videos[0])))
-        self.playlist.addMedia(QMediaContent(QUrl.fromLocalFile(self.list_of_videos[1])))
+        for video in self.list_of_videos:
+            self.playlist.addMedia((QMediaContent(QUrl.fromLocalFile(video))))
         self.playlist.setPlaybackMode(QMediaPlaylist.Sequential)
         self.mediaPlayer.setPlaylist(self.playlist)
 
@@ -43,22 +44,24 @@ class VideoStream(QVideoWidget):
         self.setGeometry(x, y, width, height)
         self.mediaPlayer.setVideoOutput(self)
         self.playlist.currentMediaChanged.connect(self.next_video_started)
-        self.mediaPlayer.play()
+        # self.mediaPlayer.play()
 
-        # self.curr_tlcr = []
-        # self.curr_intensity = 0
-        # self.curr_duration = 0
-        # self.curr_timer_tlcr_len = 0
-        # self.curr_period = 0
-        # self.tsp_arr = []
-        #
-        #
-        # self.next_tlcr = []
-        # self.next_intensity = 0
-        # self.next_duration = 0
-        #
-        # self.tlcr_plot = tlcr_plot
-        # self.analysis_plot = analysis_plot
+        self.curr_tlcr = []
+        self.curr_intensity = 0
+        self.curr_duration = 0
+        self.curr_timer_tlcr_len = 0
+        self.curr_period = 0
+        self.tsp_arr = []
+        self.range_size = 30
+        self.first_video_currently = True
+
+
+        self.next_tlcr = []
+        self.next_intensity = 0
+        self.next_duration = 0
+
+        self.tlcr_plot = tlcr_plot
+        self.analysis_plot = analysis_plot
         #
         # s = []
         # f = open("D:/Chrome Downloads/mock_tlcr.txt", "r")
@@ -90,25 +93,28 @@ class VideoStream(QVideoWidget):
 
         # print(tlcr, intensity)
 
+        vid = self.list_of_videos[0]
+        self.run_first_current_video_analysis(vid)
 
 
-        list_lines = []
-        sql_lines = QSqlQuery('SELECT * FROM line WHERE id={}'.format(6))
-        while sql_lines.next():
-            list_lines = LineSql.get_list_coords(sql_lines.record())
-        print(list_lines)
 
-        self.thread = QThread()
-        self.run_image = RunImageNetThread('E:/18/cam18stream_1580709296.mp4', list_lines)
-
-        self.run_image.moveToThread(self.thread)
-
-        self.thread.started.connect(self.run_image.run)
-        self.run_image.finished.connect(self.thread.quit)
-        self.run_image.finished.connect(self.run_image.deleteLater)
-        self.thread.finished.connect(self.thread.deleteLater)
-        # Step 6: Start the thread
-        self.thread.start()
+        # list_lines = []
+        # sql_lines = QSqlQuery('SELECT * FROM line WHERE id={}'.format(6))
+        # while sql_lines.next():
+        #     list_lines = LineSql.get_list_coords(sql_lines.record())
+        # print(list_lines)
+        #
+        # self.thread = QThread()
+        # self.run_image = RunImageNetThread('E:/18/cam18stream_1580709296.mp4', list_lines)
+        #
+        # self.run_image.moveToThread(self.thread)
+        #
+        # self.thread.started.connect(self.run_image.run)
+        # self.run_image.finished.connect(self.thread.quit)
+        # self.run_image.finished.connect(self.run_image.deleteLater)
+        # self.thread.finished.connect(self.thread.deleteLater)
+        # # Step 6: Start the thread
+        # self.thread.start()
 
         # list_lines = []
         # sql_lines = QSqlQuery('SELECT * FROM line WHERE id={}'.format(6))
@@ -148,49 +154,104 @@ class VideoStream(QVideoWidget):
 
 
     def next_video_started(self, vid):
-        # if not vid.isNull():
-        #     self.get_stat_values(vid)
-        b = True
+        if not vid.isNull():
+            self.get_stat_values(vid)
 
     def get_stat_values(self, vid):
-        self.curr_timer_tlcr_len = self.curr_tlcr
-        time_period = self.next_duration / len(self.next_tlcr)
-        self.curr_period = time_period
-        self.curr_tlcr = self.curr_tlcr + self.next_tlcr
-        self.curr_intensity = self.next_intensity
-        self.curr_duration = self.next_duration
+        self.switch_next_to_curr()
 
         url = vid.canonicalUrl()
         print(url.fileName())
         next_video_path = self.list_of_videos[self.playlist.nextIndex()]
-        tlcr, intensity = self.runVideoAnalyze(next_video_path)
         video_duration = Video.get_video_duration(next_video_path)
-
-        range_size = 30
-        tlcr_ranges = [tlcr[i:i + range_size] for i in range(0, len(tlcr), range_size)]
-        tlcr_mean = []
-        for i in range(len(tlcr_ranges)):
-            tlcr_mean.append(sum(tlcr_ranges[i]) / range_size)
         self.next_duration = video_duration
-        self.next_tlcr = tlcr_mean
-        self.next_intensity = intensity
+        print("DURATION")
+        print(video_duration)
+        self.run_video_analysis(next_video_path)
 
     def update_plot_with_timer(self):
+        self.curr_dt = datetime.now()
         self.curr_timer_tlcr_len += 1
-        help_curr = self.curr_tlcr[:len(self.curr_tlcr) - (len(self.curr_tlcr) - self.curr_timer_tlcr_len) + 9]
-        tsp = int(round(self.curr_dt.timestamp()))
-        for i in range(10):
-            self.tsp_arr.append(tsp)
+        help_curr = self.curr_tlcr[:self.curr_timer_tlcr_len]
+        tsp_full = self.curr_dt.timestamp()
+        tsp = int(round(tsp_full))
+        print("DATETIME DIFF")
+        print(datetime.fromtimestamp(tsp_full))
+        print(datetime.fromtimestamp(tsp))
+
+        self.tsp_arr.append(tsp)
         self.tlcr_plot.update_data_tmp(help_curr, self.tsp_arr)
+        # y = []
+        # y.append(0.58)
+        # y.append(0.64)
+        # y.append(0.22)
+        # y.append(0.47)
+        # y.append(0.75)
+        #
+        # x = []
+        # for i in range(0, 5):
+        #     x.append(1684792800 + i * 1000)
+        # self.tlcr_plot.update_data_tmp(y, x)
+        print("PERIOD")
+        print(self.curr_period)
         threading.Timer(self.curr_period, self.update_plot_with_timer).start()
 
-    def runVideoAnalyze(self, video_path):
+    def run_video_analysis(self, video_path):
         list_lines = []
         sql_lines = QSqlQuery('SELECT * FROM line WHERE id={}'.format(6))
         while sql_lines.next():
             list_lines = LineSql.get_list_coords(sql_lines.record())
         print(list_lines)
-        thread = RunImageNetThread(video_path, list_lines)
-        return thread.run()
 
-        # Write to db and share data with plot somehow
+        self.thread = QThread()
+        self.run_image = RunImageNetThread(video_path, list_lines)
+
+        self.run_image.moveToThread(self.thread)
+
+        self.thread.started.connect(self.run_image.run)
+        self.run_image.finished.connect(self.set_tlcr_and_intensity)
+        self.run_image.finished.connect(self.thread.quit)
+        self.run_image.finished.connect(self.run_image.deleteLater)
+        if self.first_video_currently:
+            self.run_image.finished.connect(self.mediaPlayer.play)
+            self.run_image.finished.connect(self.run_first_next_video_analysis)
+            self.run_image.finished.connect(self.update_plot_with_timer)
+            self.first_video_currently = False
+        self.thread.finished.connect(self.thread.deleteLater)
+        # Step 6: Start the thread
+        self.thread.start()
+
+    def set_tlcr_and_intensity(self):
+        tlcr, intensity = self.run_image.get_tlcr_and_intensity()
+        tlcr_ranges = [tlcr[i:i + self.range_size] for i in range(0, len(tlcr), self.range_size)]
+        tlcr_mean = []
+        for i in range(len(tlcr_ranges)):
+            tlcr_mean.append(sum(tlcr_ranges[i]) / self.range_size)
+        print("TLCR")
+        print(tlcr_mean)
+        self.next_tlcr = tlcr_mean
+        self.next_intensity = intensity
+
+    def run_first_current_video_analysis(self, vid):
+        video_duration = Video.get_video_duration(vid)
+        self.next_duration = video_duration
+        self.run_video_analysis(vid)
+        print("DURATION")
+        print(video_duration)
+
+    def run_first_next_video_analysis(self):
+        self.switch_next_to_curr()
+
+        video_duration = Video.get_video_duration(self.list_of_videos[1])
+        self.next_duration = video_duration
+        self.run_video_analysis(self.list_of_videos[1])
+        print("DURATION")
+        print(video_duration)
+
+    def switch_next_to_curr(self):
+        self.curr_timer_tlcr_len = len(self.curr_tlcr)
+        time_period = self.next_duration / len(self.next_tlcr)
+        self.curr_period = time_period
+        self.curr_tlcr = self.curr_tlcr + self.next_tlcr
+        self.curr_intensity = self.next_intensity
+        self.curr_duration = self.next_duration

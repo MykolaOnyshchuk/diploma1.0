@@ -112,7 +112,7 @@ class DefaultPlot(QtWidgets.QWidget):
             x, y, _ = self.__lines_data[i]
             if len(x) == 0:
                 continue
-            self.axes.plot(x, y, linestyle='solid', color=self.__colors[i], label=str(i + 1))
+            self.axes.plot(x, y, linestyle='solid', color=self.__colors[i], label="Lane "+str(i + 1))
 
         self.axes.legend()
         self.__inner_canvas.draw()
@@ -231,12 +231,14 @@ class DefaultPlot(QtWidgets.QWidget):
         self.setVisible(True)
 
     def update_data_tmp(self, tlcr, tsp):
-        count_lines = len(self.__lines_data)
         tm = []
-        for i in range(len(tm) - 1):
+        print("TIMESTAMPS")
+        for i in range(len(tsp)):
             tm.append(datetime.fromtimestamp(tsp[i]))
+            print(tm[i])
         self.__lines_data.clear()
         self.__lines_data.append((tm, tlcr, tsp[len(tsp) - 1]))
+        count_lines = len(self.__lines_data)
         if count_lines == 0:
             self.setVisible(False)
             return
@@ -246,15 +248,15 @@ class DefaultPlot(QtWidgets.QWidget):
 
 
         # table
-        self.__model.setColumnCount(len(self.__lines_data))
-        self.__model.setVerticalHeaderLabels(self.__table_labels)
-        for i in range(0, count_lines):
-            x, y, last_tsp = self.__lines_data[i]
-            self.__model.setData(self.__model.index(0, i), y[-1])
-
-        # self.__table.resizeColumnsToContents()
-
-        self.__table.resizeRowsToContents()
+        # self.__model.setColumnCount(len(self.__lines_data))
+        # self.__model.setVerticalHeaderLabels(self.__table_labels)
+        # for i in range(0, count_lines):
+        #     x, y, last_tsp = self.__lines_data[i]
+        #     self.__model.setData(self.__model.index(0, i), y[-1])
+        #
+        # # self.__table.resizeColumnsToContents()
+        #
+        # self.__table.resizeRowsToContents()
 
     def __update(self, tlcr, tsp):
         print('update')
